@@ -16,8 +16,9 @@ package errorhandler
 
 import (
 	"bytes"
-	"encoding/json"
 	"net/http"
+
+	jsoniter "github.com/json-iterator/go"
 
 	"github.com/vicanso/cod"
 	"github.com/vicanso/hes"
@@ -32,6 +33,10 @@ type (
 
 const (
 	errErrorHandlerCategory = "cod-error-handler"
+)
+
+var (
+	json = jsoniter.ConfigCompatibleWithStandardLibrary
 )
 
 // NewDefault create a default error handler

@@ -8,6 +8,36 @@ import (
 	"github.com/vicanso/cod"
 )
 
+func TestSkipAndNoError(t *testing.T) {
+	fn := NewDefault()
+	t.Run("skip", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/users/me", nil)
+		resp := httptest.NewRecorder()
+		c := cod.NewContext(resp, req)
+		c.Committed = true
+		c.Next = func() error {
+			return nil
+		}
+		err := fn(c)
+		if err != nil || c.BodyBuffer != nil {
+			t.Fatalf("skip error handler fail, %v", err)
+		}
+	})
+
+	t.Run("no error", func(t *testing.T) {
+		req := httptest.NewRequest("GET", "/users/me", nil)
+		resp := httptest.NewRecorder()
+		c := cod.NewContext(resp, req)
+		c.Next = func() error {
+			return nil
+		}
+		err := fn(c)
+		if err != nil || c.BodyBuffer != nil {
+			t.Fatalf("no error handler fail, %v", err)
+		}
+	})
+}
+
 func TestErrorHandler(t *testing.T) {
 	fn := NewDefault()
 	req := httptest.NewRequest("GET", "/users/me", nil)
