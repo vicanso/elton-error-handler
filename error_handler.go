@@ -27,7 +27,8 @@ import (
 type (
 	// Config error handler config
 	Config struct {
-		Skipper cod.Skipper
+		Skipper      cod.Skipper
+		ResponseType string
 	}
 )
 
@@ -41,7 +42,9 @@ var (
 
 // NewDefault create a default error handler
 func NewDefault() cod.Handler {
-	return New(Config{})
+	return New(Config{
+		ResponseType: "json",
+	})
 }
 
 // New create a error handler
@@ -68,16 +71,19 @@ func New(config Config) cod.Handler {
 				Err:        err,
 			}
 		}
-		// 出错响应，直接设置为no cache
-		c.NoCache()
 		c.StatusCode = he.StatusCode
-		// 默认以json的形式返回
-		buf, e := json.Marshal(he)
-		if e != nil {
-			return e
+		if config.ResponseType == "json" {
+			buf, e := json.Marshal(he)
+			if e != nil {
+				return e
+			}
+			c.BodyBuffer = bytes.NewBuffer(buf)
+			c.SetHeader(cod.HeaderContentType, cod.MIMEApplicationJSON)
+		} else {
+			c.BodyBuffer = bytes.NewBufferString(he.Error())
+			c.SetHeader(cod.HeaderContentType, cod.MIMETextPlain)
 		}
-		c.BodyBuffer = bytes.NewBuffer(buf)
-		c.SetHeader(cod.HeaderContentType, cod.MIMEApplicationJSON)
+
 		return nil
 	}
 }

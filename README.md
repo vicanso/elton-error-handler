@@ -2,7 +2,7 @@
 
 [![Build Status](https://img.shields.io/travis/vicanso/cod-error-handler.svg?label=linux+build)](https://travis-ci.org/vicanso/cod-error-handler)
 
-Error handler for cod, it convert error to json response. Suggest to use `hes.Error` for custom error.
+Error handler for cod, it convert error to json response(NewDefault). Suggest to use `hes.Error` for custom error.
 
 ```go
 package main
