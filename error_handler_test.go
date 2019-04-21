@@ -56,7 +56,7 @@ func TestErrorHandler(t *testing.T) {
 			t.Fatalf("cache control field is invalid")
 		}
 		ct := c.GetHeader(cod.HeaderContentType)
-		if c.BodyBuffer.String() != `{"statusCode":500,"category":"cod-error-handler","message":"abcd"}` ||
+		if c.BodyBuffer.String() != `{"statusCode":500,"category":"cod-error-handler","message":"abcd","exception":true}` ||
 			ct != "application/json; charset=UTF-8" {
 			t.Fatalf("error handler fail")
 		}

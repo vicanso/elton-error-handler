@@ -64,12 +64,10 @@ func New(config Config) cod.Handler {
 		}
 		he, ok := err.(*hes.Error)
 		if !ok {
-			he = &hes.Error{
-				StatusCode: http.StatusInternalServerError,
-				Message:    err.Error(),
-				Category:   errErrorHandlerCategory,
-				Err:        err,
-			}
+			he = hes.Wrap(err)
+			he.StatusCode = http.StatusInternalServerError
+			he.Exception = true
+			he.Category = errErrorHandlerCategory
 		}
 		c.StatusCode = he.StatusCode
 		if config.ResponseType == "json" {
