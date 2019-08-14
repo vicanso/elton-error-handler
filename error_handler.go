@@ -71,10 +71,7 @@ func New(config Config) cod.Handler {
 		}
 		c.StatusCode = he.StatusCode
 		if config.ResponseType == "json" {
-			buf, e := json.Marshal(he)
-			if e != nil {
-				return e
-			}
+			buf := he.ToJSON()
 			c.BodyBuffer = bytes.NewBuffer(buf)
 			c.SetHeader(cod.HeaderContentType, cod.MIMEApplicationJSON)
 		} else {
