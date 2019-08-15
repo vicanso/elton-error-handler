@@ -20,20 +20,20 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 
-	"github.com/vicanso/cod"
+	"github.com/vicanso/elton"
 	"github.com/vicanso/hes"
 )
 
 type (
 	// Config error handler config
 	Config struct {
-		Skipper      cod.Skipper
+		Skipper      elton.Skipper
 		ResponseType string
 	}
 )
 
 const (
-	errErrorHandlerCategory = "cod-error-handler"
+	errErrorHandlerCategory = "elton-error-handler"
 )
 
 var (
@@ -41,19 +41,19 @@ var (
 )
 
 // NewDefault create a default error handler
-func NewDefault() cod.Handler {
+func NewDefault() elton.Handler {
 	return New(Config{
 		ResponseType: "json",
 	})
 }
 
 // New create a error handler
-func New(config Config) cod.Handler {
+func New(config Config) elton.Handler {
 	skipper := config.Skipper
 	if skipper == nil {
-		skipper = cod.DefaultSkipper
+		skipper = elton.DefaultSkipper
 	}
-	return func(c *cod.Context) error {
+	return func(c *elton.Context) error {
 		if skipper(c) {
 			return c.Next()
 		}
@@ -73,10 +73,10 @@ func New(config Config) cod.Handler {
 		if config.ResponseType == "json" {
 			buf := he.ToJSON()
 			c.BodyBuffer = bytes.NewBuffer(buf)
-			c.SetHeader(cod.HeaderContentType, cod.MIMEApplicationJSON)
+			c.SetHeader(elton.HeaderContentType, elton.MIMEApplicationJSON)
 		} else {
 			c.BodyBuffer = bytes.NewBufferString(he.Error())
-			c.SetHeader(cod.HeaderContentType, cod.MIMETextPlain)
+			c.SetHeader(elton.HeaderContentType, elton.MIMETextPlain)
 		}
 
 		return nil

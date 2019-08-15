@@ -1,8 +1,8 @@
-# cod-error-handler
+# elton-error-handler
 
-[![Build Status](https://img.shields.io/travis/vicanso/cod-error-handler.svg?label=linux+build)](https://travis-ci.org/vicanso/cod-error-handler)
+[![Build Status](https://img.shields.io/travis/vicanso/elton-error-handler.svg?label=linux+build)](https://travis-ci.org/vicanso/elton-error-handler)
 
-Error handler for cod, it convert error to json response(NewDefault). Suggest to use `hes.Error` for custom error.
+Error handler for elton, it convert error to json response(NewDefault). Suggest to use `hes.Error` for custom error.
 
 ```go
 package main
@@ -10,17 +10,17 @@ package main
 import (
 	"errors"
 
-	"github.com/vicanso/cod"
+	"github.com/vicanso/elton"
 
-	errorhandler "github.com/vicanso/cod-error-handler"
+	errorhandler "github.com/vicanso/elton-error-handler"
 )
 
 func main() {
 
-	d := cod.New()
+	d := elton.New()
 	d.Use(errorhandler.NewDefault())
 
-	d.GET("/", func(c *cod.Context) (err error) {
+	d.GET("/", func(c *elton.Context) (err error) {
 		err = errors.New("abcd")
 		return
 	})

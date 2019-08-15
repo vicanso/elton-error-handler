@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vicanso/cod"
+	"github.com/vicanso/elton"
 )
 
 func TestSkipAndNoError(t *testing.T) {
@@ -17,7 +18,7 @@ func TestSkipAndNoError(t *testing.T) {
 		assert := assert.New(t)
 		req := httptest.NewRequest("GET", "/users/me", nil)
 		resp := httptest.NewRecorder()
-		c := cod.NewContext(resp, req)
+		c := elton.NewContext(resp, req)
 		c.Committed = true
 		c.Next = func() error {
 			return nil
@@ -31,7 +32,7 @@ func TestSkipAndNoError(t *testing.T) {
 		assert := assert.New(t)
 		req := httptest.NewRequest("GET", "/users/me", nil)
 		resp := httptest.NewRecorder()
-		c := cod.NewContext(resp, req)
+		c := elton.NewContext(resp, req)
 		c.Next = func() error {
 			return nil
 		}
@@ -47,41 +48,36 @@ func TestErrorHandler(t *testing.T) {
 		fn := NewDefault()
 		req := httptest.NewRequest("GET", "/users/me", nil)
 		resp := httptest.NewRecorder()
-		c := cod.NewContext(resp, req)
+		c := elton.NewContext(resp, req)
 		c.Next = func() error {
 			return errors.New("abcd")
 		}
 		c.CacheMaxAge("5m")
 		err := fn(c)
 		assert.Nil(err)
-		assert.Equal(c.GetHeader(cod.HeaderCacheControl), "public, max-age=300")
-		assert.Equal(c.BodyBuffer.String(), `{"statusCode":500,"category":"cod-error-handler","message":"abcd","exception":true}`)
-		assert.Equal(c.GetHeader(cod.HeaderContentType), "application/json; charset=UTF-8")
+		assert.Equal("public, max-age=300", c.GetHeader(elton.HeaderCacheControl))
+		assert.True(strings.HasSuffix(c.BodyBuffer.String(), `"statusCode":500,"category":"elton-error-handler","message":"abcd","exception":true}`))
+		assert.Equal("application/json; charset=UTF-8", c.GetHeader(elton.HeaderContentType))
 	})
 
 	t.Run("text type", func(t *testing.T) {
+		assert := assert.New(t)
 		fn := New(Config{
 			ResponseType: "text",
 		})
 		req := httptest.NewRequest("GET", "/users/me", nil)
 		resp := httptest.NewRecorder()
-		c := cod.NewContext(resp, req)
+		c := elton.NewContext(resp, req)
 		c.Next = func() error {
 			return errors.New("abcd")
 		}
 		c.CacheMaxAge("5m")
 		err := fn(c)
-		if err != nil {
-			t.Fatalf("error handler fail, %v", err)
-		}
-		if c.GetHeader(cod.HeaderCacheControl) != "public, max-age=300" {
-			t.Fatalf("cache control field is invalid")
-		}
-		ct := c.GetHeader(cod.HeaderContentType)
-		if c.BodyBuffer.String() != "category=cod-error-handler, message=abcd" ||
-			ct != "text/plain; charset=UTF-8" {
-			t.Fatalf("error handler fail")
-		}
+		assert.Nil(err)
+		assert.Equal("public, max-age=300", c.GetHeader(elton.HeaderCacheControl))
+		ct := c.GetHeader(elton.HeaderContentType)
+		assert.Equal("category=elton-error-handler, message=abcd", c.BodyBuffer.String())
+		assert.Equal("text/plain; charset=UTF-8", ct)
 	})
 }
 
