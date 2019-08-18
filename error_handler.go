@@ -33,6 +33,7 @@ type (
 )
 
 const (
+	// ErrCategory error cateogry of error handler
 	ErrCategory = "elton-error-handler"
 )
 
