@@ -33,7 +33,7 @@ type (
 )
 
 const (
-	errErrorHandlerCategory = "elton-error-handler"
+	ErrCategory = "elton-error-handler"
 )
 
 var (
@@ -67,7 +67,7 @@ func New(config Config) elton.Handler {
 			he = hes.Wrap(err)
 			he.StatusCode = http.StatusInternalServerError
 			he.Exception = true
-			he.Category = errErrorHandlerCategory
+			he.Category = ErrCategory
 		}
 		c.StatusCode = he.StatusCode
 		if config.ResponseType == "json" {
