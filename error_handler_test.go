@@ -47,6 +47,7 @@ func TestErrorHandler(t *testing.T) {
 		assert := assert.New(t)
 		fn := NewDefault()
 		req := httptest.NewRequest("GET", "/users/me", nil)
+		req.Header.Set("Accept", "application/json, text/plain, */*")
 		resp := httptest.NewRecorder()
 		c := elton.NewContext(resp, req)
 		c.Next = func() error {

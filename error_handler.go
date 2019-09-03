@@ -17,8 +17,7 @@ package errorhandler
 import (
 	"bytes"
 	"net/http"
-
-	jsoniter "github.com/json-iterator/go"
+	"strings"
 
 	"github.com/vicanso/elton"
 	"github.com/vicanso/hes"
@@ -37,15 +36,9 @@ const (
 	ErrCategory = "elton-error-handler"
 )
 
-var (
-	json = jsoniter.ConfigCompatibleWithStandardLibrary
-)
-
 // NewDefault create a default error handler
 func NewDefault() elton.Handler {
-	return New(Config{
-		ResponseType: "json",
-	})
+	return New(Config{})
 }
 
 // New create a error handler
@@ -71,7 +64,7 @@ func New(config Config) elton.Handler {
 			he.Category = ErrCategory
 		}
 		c.StatusCode = he.StatusCode
-		if config.ResponseType == "json" {
+		if config.ResponseType == "json" || strings.Contains(c.GetRequestHeader("Accept"), "application/json") {
 			buf := he.ToJSON()
 			c.BodyBuffer = bytes.NewBuffer(buf)
 			c.SetHeader(elton.HeaderContentType, elton.MIMEApplicationJSON)
