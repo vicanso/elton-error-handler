@@ -64,7 +64,8 @@ func New(config Config) elton.Handler {
 			he.Category = ErrCategory
 		}
 		c.StatusCode = he.StatusCode
-		if config.ResponseType == "json" || strings.Contains(c.GetRequestHeader("Accept"), "application/json") {
+		if config.ResponseType == "json" ||
+			strings.Contains(c.GetRequestHeader("Accept"), "application/json") {
 			buf := he.ToJSON()
 			c.BodyBuffer = bytes.NewBuffer(buf)
 			c.SetHeader(elton.HeaderContentType, elton.MIMEApplicationJSON)
