@@ -1,5 +1,7 @@
 # elton-error-handler
 
+The middleware has been archived, please use the middleware of [elton](https://github.com/vicanso/elton).
+
 [![Build Status](https://img.shields.io/travis/vicanso/elton-error-handler.svg?label=linux+build)](https://travis-ci.org/vicanso/elton-error-handler)
 
 Error handler for elton, it convert error to json/text response(NewDefault). Suggest to use `hes.Error` for custom error.
